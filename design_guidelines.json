@@ -1,0 +1,169 @@
+{
+  "app_name": "CARI KROTO",
+  "personality": "1 iOS-Native Clean",
+  "personality_one_liner": "A professional, highly-legible field utility merging native structural clarity with outdoor-ready contrast and botanical accents.",
+  "color": {
+    "surface": "#F9F9F7",
+    "onSurface": "#1C1D1C",
+    "surfaceSecondary": "#FFFFFF",
+    "onSurfaceSecondary": "#1C1D1C",
+    "surfaceTertiary": "#F0F2F0",
+    "onSurfaceTertiary": "#3B3D3B",
+    "surfaceInverse": "#121412",
+    "onSurfaceInverse": "#F9F9F7",
+    "brand": "#2B5336",
+    "onBrand": "#FFFFFF",
+    "brandPrimary": "#2B5336",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#78947C",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "#E3EBE4",
+    "onBrandTertiary": "#2B5336",
+    "success": "#3A7D44",
+    "onSuccess": "#FFFFFF",
+    "warning": "#B36B00",
+    "onWarning": "#FFFFFF",
+    "error": "#A93B3B",
+    "onError": "#FFFFFF",
+    "info": "#4C4F4D",
+    "onInfo": "#FFFFFF",
+    "border": "#E5E8E5",
+    "borderStrong": "#B4BDB5",
+    "divider": "#E5E8E5",
+    "muted": "#6E736F"
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous padding around content to ensure touch accuracy in the field. Avoid dense dashboard clusters. Maintain minimum 56pt tappable height for lists.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "1",
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Floating header elements on the Map screen",
+      "Bottom tab bar",
+      "Bottom-sheet headers and drag handles",
+      "Floating Action Buttons (FAB)"
+    ],
+    "dont's": [
+      "Every button",
+      "List rows",
+      "Dense form inputs"
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler",
+    "maps": "react-native-maps"
+  },
+  "screens": [
+    {
+      "name": "Map",
+      "purpose": "Full-screen interactive map to visualize all marked kroto tree locations.",
+      "states": {
+        "loading": "Map skeleton or centered spinner over a muted map grid.",
+        "empty": "Map centered on current GPS location, single prompt overlay to 'Mark First Tree'.",
+        "error": "Full-screen error asking to enable Location Permissions."
+      },
+      "layout": "ZStack approach: react-native-maps MapView behind floating UI. Top floating search/filter bar using glass effect. Large primary FAB (pill-shaped) at bottom-right for 'Tandai Lokasi' (Mark Location). Bottom sheet (@gorhom/bottom-sheet) triggers when a pin is tapped to show quick details (Status, Next Harvest, distance) and a CTA to view full details. Map pins should be color-coded (e.g., brandPrimary for ready, muted for cooldown)."
+    },
+    {
+      "name": "Daftar Lokasi (List)",
+      "purpose": "Searchable, sortable list view of all tracked trees.",
+      "states": {
+        "loading": "List skeleton with rounded rectangles.",
+        "empty": "Illustration of a forest path with text 'Belum ada pohon ditandai' and 'Tambah Lokasi' CTA.",
+        "error": "Readable message with a Retry button."
+      },
+      "layout": "Sticky search bar at the top. List rows with generous padding (min 56pt height). Each row features a small thumbnail image (or initials fallback in a brandTertiary circle), Tree Name, Last Visit timestamp, and a Status Badge (Ready/Cooldown). Single column list."
+    },
+    {
+      "name": "Detail Lokasi",
+      "purpose": "Deep dive into a specific tree location showing history, photos, and exact GPS data.",
+      "states": {
+        "loading": "Spinner centered on a blank layout.",
+        "empty": "N/A - Data always exists if opened.",
+        "error": "Failed to load details error with Retry button."
+      },
+      "layout": "Large hero image photo of the tree at the top with a top-to-bottom gradient scrim (dark at bottom) and back button overlaid. Content below scrolls: Title, Address/GPS coords (use a Mono font like JetBrains Mono for exact coords to look technical), Notes. A 'Riwayat Kunjungan' section showing a timeline/list of previous harvests. Sticky primary CTA 'Catat Panen' pinned to the bottom (safe area aware)."
+    },
+    {
+      "name": "Riwayat Panen (Log Form)",
+      "purpose": "Form to record a new visit or harvest log.",
+      "states": {
+        "loading": "Saving spinner overlay.",
+        "empty": "N/A",
+        "error": "Validation error text below inputs."
+      },
+      "layout": "Single column form. Labels above inputs. Photo uploader block (allows taking/picking photos). Date/Time picker for harvest time. Slider or input for harvest amount. Next harvest schedule setter. Submit sticky at bottom inside KeyboardAvoidingView."
+    }
+  ],
+  "images": {
+    "onboarding_ant": {
+      "url": "https://images.unsplash.com/photo-1588470045344-4393b295297c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwxfHx3ZWF2ZXIlMjBhbnR8ZW58MHx8fHwxNzkwNTc2MjU5fDA&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1588470045344-4393b295297c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwxfHx3ZWF2ZXIlMjBhbnR8ZW58MHx8fHwxNzkwNTc2MjU5fDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Weaver ant close up"
+    },
+    "empty_forest_path": {
+      "url": "https://images.unsplash.com/photo-1624818145490-b385d0593e5d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwxfHxmb3Jlc3QlMjBwYXRoJTIwZW1wdHl8ZW58MHx8fHwxNzkwNTc2MjU5fDA&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1598454981031-9c59c2d1a5c7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwyfHxmb3Jlc3QlMjBwYXRoJTIwZW1wdHl8ZW58MHx8fHwxNzkwNTc2MjU5fDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Empty forest path"
+    },
+    "default_tree_header": {
+      "url": "https://images.unsplash.com/photo-1614022837699-f8a036d6bd58?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHw0fHxmb3Jlc3QlMjB0cmVlJTIwdHJ1bmslMjB0ZXh0dXJlfGVufDB8fHx8MTc5MDU3NjI0OHww&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1614022837699-f8a036d6bd58?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHw0fHxmb3Jlc3QlMjB0cmVlJTIwdHJ1bmslMjB0ZXh0dXJlfGVufDB8fHx8MTc5MDU3NjI0OHww&ixlib=rb-4.1.0&q=85",
+      "alt": "Close up of forest tree trunk texture"
+    }
+  },
+  "haptics": {
+    "AddLocationTap": "impactMedium",
+    "PinSelect": "selection",
+    "SaveHarvest": "notificationSuccess",
+    "ToggleTheme": "impactLight",
+    "TabSwitch": "selection"
+  },
+  "instructions_to_main_agent": [
+    "Design for outdoor utility first: use strict WCAG AA contrast ratios because this app will be used under bright sunlight. The map screen is the primary interface.",
+    "The UI is built on '1 iOS-Native Clean' structure but infused with outdoor tracking utility logic. Avoid soft/muddy colors; stick to sharp white/black and the distinct Forest Green brand tone.",
+    "Implement a Z-stack structure for the Map screen: `react-native-maps` forms the base, with a floating search/filter header on top (glass effect) and a Gorhom Bottom Sheet for location details.",
+    "Always use a gradient scrim (top-to-bottom, ending at 70%+ dark inverse surface) under any text placed on hero images (like tree photos).",
+    "Use a Mono font (e.g., Space Mono or JetBrains Mono) explicitly for GPS coordinates and timestamps to provide a technical, reliable feel.",
+    "Implement a dedicated color status for markers/lists: BrandPrimary (Green) for 'Ready to Harvest', Warning (Orange) or Muted for 'Cooldown/Recently Harvested'.",
+    "Provide a robust Dark Mode implementation. Dark mode tokens should map to: surface: #121412, surfaceSecondary: #1C1D1C, brandPrimary: #4E875F (lighter for contrast). Maintain the same iOS-native layout rhythms.",
+    "When a user opens the app, the bottom sheet should rest in an unobtrusive closed/peek state, leaving the map clear for navigation. Tapping a pin brings it to the middle snap point.",
+    "For the 'Tandai Lokasi' button over the map, use a prominent FAB pill inside the safe area, clear of the bottom sheet snap points."
+  ]
+}

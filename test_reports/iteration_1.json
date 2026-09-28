@@ -1,0 +1,54 @@
+{
+  "summary": "Full backend + frontend regression on CARI KROTO MVP. Backend: 12/12 pytest cases passed via public EXPO_PUBLIC_BACKEND_URL, covering locations CRUD, visit create/edit/delete with aggregate recompute (visit_count, total_harvest_kg, last_visit_at, next_harvest_at, status flip to cooldown), photo upload/serve/delete, and soft-delete cascade. Frontend: web preview loads without red screen; bottom tabs (Peta/Daftar/Jadwal/Atur) navigate; header shows counts; map-type toggle and recenter render; 'Tandai Lokasi' FAB opens add-location screen (add-location-screen testID), prefilled coords, save creates location and returns home with count updated to '1 lokasi · 1 siap panen'. Daftar tab lists card, search filter and 3 sort chips (ready/recent/name) work, card tap navigates to /location/{id} (detail-screen). Detail shows Jadwal panen countdown, Total panen, Kunjungan count, catatan, Foto Pohon, Riwayat Kunjungan section. 'Catat Panen' opens Log screen (log-harvest-screen) with input-amount/input-visit-notes, save-visit-btn persists visit; on return detail shows '2,5 kg / 1x / Masa Tunggu' status flip and visit row with visit-edit/visit-delete testIDs. Settings theme selector switches modes (dark/light/system) and persists via useThemeMode.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "PUT /api/locations/{id}", "issue": "LocationUpdate uses `payload.dict()` (deprecated in Pydantic v2, should be model_dump); also updates dict filters None but allows empty strings which is fine. Cosmetic only."},
+      {"endpoint": "PUT /api/visits/{id}", "issue": "Same deprecated `.dict()` call. Cosmetic."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "location/[id] detail", "issues": ["Fixed-bottom 'Catat Panen' button overlaps the bottom tab bar area on small viewport (390x844) — tabs still reachable but visually stacked. Consider adding bottom padding equal to tab height, or hide tab bar on this stack screen."]}
+    ],
+    "react_native_issues": [
+      {"component": "index.tsx (MapScreen header)", "issue": "Uses deprecated `pointerEvents` prop on View — console warns 'props.pointerEvents is deprecated. Use style.pointerEvents'. Reference: /app/frontend/app/(tabs)/index.tsx:118"},
+      {"component": "Multiple styles across screens/components", "issue": "Uses deprecated `shadow*` style props ('shadow*' style props are deprecated. Use 'boxShadow' in React Native Web/0.76+). Reference: /app/frontend/app/(tabs)/index.tsx (headerCard, controlBtn, fab) and likely other components."},
+      {"component": "expo-notifications", "issue": "Web warning: 'Listening to push token changes is not yet fully supported on web. Adding a listener will have no effect.' Native only; wrap listener registration in `if (Platform.OS !== 'web')` to silence."},
+      {"component": "Animated (bottom sheet / add modal)", "issue": "Warning: 'Animated: `useNativeDriver` is not supported because the native animated module is missing.' Web-only cosmetic; consider setting useNativeDriver:false on web or gate the animation."}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_backend.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Replace `pointerEvents=\"box-none\"` prop with style.pointerEvents on the floating header View in app/(tabs)/index.tsx:118 (and any similar usages).",
+    "Migrate shadow* style props to `boxShadow` (or keep for iOS/Android and guard for web) in FAB, header card, control buttons and shared components.",
+    "Gate expo-notifications listener setup so it is only registered when Platform.OS !== 'web'.",
+    "Optional: switch backend Pydantic v1 `.dict()` calls to `.model_dump()` in server.py update endpoints.",
+    "Optional UX: on the location detail screen, add bottom padding equal to bottom tab bar height so the 'Catat Panen' button doesn't overlap the tab bar visually on web."
+  ],
+  "critical_code_review_comments": [
+    "server.py correctly excludes MongoDB _id from responses via location_doc_to_api / visit_doc_to_api mappers — good.",
+    "Aggregation on visit CRUD is done with $inc atomic ops on Mongo — correct and race-safe for single-user app.",
+    "Soft-delete cascade of visits when a location is deleted is implemented — matches spec.",
+    "No auth as per spec; OWNER_ID hardcoded to 'default' — acceptable for MVP.",
+    "Frontend uses EXPO_PUBLIC_BACKEND_URL correctly, no hardcoded URLs found in tested screens.",
+    "Interactive elements (FAB, controls, cards, chips, tabs, save buttons, visit rows) all have testID attributes — testability is excellent."
+  ],
+  "updated_files": [
+    "/app/backend/tests/conftest.py (created)",
+    "/app/backend/tests/test_backend.py (created)",
+    "/app/test_reports/iteration_1.json (created)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "seed_data_creation": "Test data created and cleaned up by tests (TEST_ prefix). UI test location also deleted via DELETE /api/locations/{id}.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend regression suite in /app/backend/tests/ (pytest, 12 cases) — run with `pytest /app/backend/tests/ -v` against EXPO_PUBLIC_BACKEND_URL. Frontend web preview supports full flow: Tandai Lokasi -> add-location-screen (input-name, input-notes, interval-{3|7|14|21|30}, save-location-btn) -> back to map; Daftar (location-card-{id}, sort-chip-{ready|recent|name}, search-input) -> Detail (detail-screen, detail-edit, detail-delete, record-harvest-btn) -> Log (log-harvest-screen, input-amount, input-visit-notes, save-visit-btn). Native-only features (real map, GPS, camera, notifications) intentionally not testable on web and should NOT be flagged as bugs.",
+  "rca_of_issue": "N/A — no functional bugs found. Only React Native web deprecation warnings and one minor overlap on detail screen tab bar."
+}
